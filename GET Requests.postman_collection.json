@@ -1,0 +1,258 @@
+{
+	"info": {
+		"_postman_id": "1a8dd4ba-a8a2-4e1c-b011-7398b92f87b3",
+		"name": "GET Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28606830",
+		"_collection_link": "https://solar-meteor-243212.postman.co/workspace/ReqRes~c455c962-38d8-4fba-8670-fb4be544749b/collection/28606830-1a8dd4ba-a8a2-4e1c-b011-7398b92f87b3?action=share&source=collection_link&creator=28606830"
+	},
+	"item": [
+		{
+			"name": "List Users per page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Number of items in 'data' array is the correct number\", () => {\r",
+							"    pm.expect(jsonData.data.length).to.equal(jsonData.per_page);\r",
+							"});\r",
+							"\r",
+							"var names = pm.environment.get('names').split(', ');\r",
+							"\r",
+							"pm.test(\"Correct first names are included\", () => {\r",
+							"    var responseBody = pm.response.text();\r",
+							"    console.log(responseBody)\r",
+							"    names.forEach((name) => {\r",
+							"        pm.expect(responseBody).to.include(name);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All email addresses are valid\", () => {\r",
+							"    jsonData.data.forEach((item) => {\r",
+							"        pm.expect(item.email).to.match(/^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$/);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All avatar URLs are valid\",() => {\r",
+							"    jsonData.data.forEach((item) => {\r",
+							"        pm.expect(item.avatar).to.match(/^https?:\\/\\/.*$/);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{test_url}}/api/users?page=1",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List a single user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var userId = pm.environment.get('user_id');\r",
+							"var url = `${pm.variables.get('test_url')}/api/users/${userId}`;\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Name is valid\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    var names = pm.environment.get('names2');\r",
+							"    names = JSON.parse(names);\r",
+							"    var expectedName = names[userId - 1];\r",
+							"\r",
+							"    pm.expect(jsonData.name).to.eql(expectedName);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Email address is valid\", () => {\r",
+							"    var email = jsonData.data.email;\r",
+							"    pm.expect(email).to.match(/^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$/);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Avatar URL is valid\", () => {\r",
+							"    var avatarUrl = jsonData.data.avatar\r",
+							"    pm.expect(avatarUrl).to.match(/^https?:\\/\\/.*$/);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single User Not Found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body does not contain user information\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"id\", \"email\", \"first_name\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body structure is consistent for user not found\", function () {\r",
+							"      pm.expect(pm.response.text()).to.equal(\"{}\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{test_url}}/api/users/13",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delayed Response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time to not be above 3000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.above(3000);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Number of items in 'data' array is the correct number\", () => {\r",
+							"    pm.expect(jsonData.data.length).to.equal(jsonData.per_page);\r",
+							"});\r",
+							"\r",
+							"var names = pm.environment.get('names').split(', ');\r",
+							"\r",
+							"pm.test(\"Correct first names are included\", () => {\r",
+							"    var responseBody = pm.response.text();\r",
+							"    console.log(responseBody)\r",
+							"    names.forEach((name) => {\r",
+							"        pm.expect(responseBody).to.include(name);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All email addresses are valid\", () => {\r",
+							"    jsonData.data.forEach((item) => {\r",
+							"        pm.expect(item.email).to.match(/^[\\w-]+(\\.[\\w-]+)*@([\\w-]+\\.)+[a-zA-Z]{2,7}$/);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All avatar URLs are valid\",() => {\r",
+							"    jsonData.data.forEach((item) => {\r",
+							"        pm.expect(item.avatar).to.match(/^https?:\\/\\/.*$/);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{test_url}}/api/users?delay=3",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "delay",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "8e256812-2cf9-4ec1-9b78-2357c1a1952c",
+		"name": "PUT, PATCH, DELETE Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28606830",
+		"_collection_link": "https://solar-meteor-243212.postman.co/workspace/ReqRes~c455c962-38d8-4fba-8670-fb4be544749b/collection/28606830-8e256812-2cf9-4ec1-9b78-2357c1a1952c?action=share&source=collection_link&creator=28606830"
+	},
+	"item": [
+		{
+			"name": "Fully Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 250ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(250);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test('Response contains \\'updatedAt\\' field with current date and time', function () {\r",
+							"    pm.expect(jsonData).to.have.property('updatedAt');\r",
+							"    var updatedAt = new Date(jsonData.updatedAt);\r",
+							"    pm.expect(updatedAt).to.be.a('Date').and.not.be.NaN;\r",
+							"    pm.expect(updatedAt.toISOString().slice(0, 10)).to.equal(new Date().toISOString().slice(0, 10));\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify response values match environment variables\", function () {\r",
+							"    var expectedName = pm.environment.get(\"name\");\r",
+							"    var expectedJob = pm.environment.get(\"job\");\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('name', expectedName);\r",
+							"    pm.expect(jsonData).to.have.property('job', expectedJob);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"job\": \"{{job}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User - No Data In Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 250ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(250);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json()\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('error')\r",
+							"});\r",
+							"\r",
+							"// Doesn't give an error message - REPORT DEFECT!!!"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partially Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.test('Response contains \\'updatedAt\\' field with current date and time', function () {\r",
+							"    pm.expect(jsonData).to.have.property('updatedAt');\r",
+							"    var updatedAt = new Date(jsonData.updatedAt);\r",
+							"    pm.expect(updatedAt).to.be.a('Date').and.not.be.NaN;\r",
+							"    pm.expect(updatedAt.toISOString().slice(0, 10)).to.equal(new Date().toISOString().slice(0, 10));\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify response values match environment variables\", function () {\r",
+							"    var expectedName = pm.environment.get(\"newName\");\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('name', expectedName);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{newName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partially Update User - No Data In Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json()\r",
+							"pm.test(\"Response contains error message\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('error')\r",
+							"});\r",
+							"\r",
+							"// Doesn't give an error message - REPORT DEFECT!!!"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Send DELETE request again\", function () {\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.request.url,\r",
+							"        method: \"DELETE\"\r",
+							"    }, function (err, res) {\r",
+							"        pm.expect(res.code).to.be.oneOf([200, 204]);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body is empty\", function () {\r",
+							"    pm.expect(pm.response.text()).to.have.lengthOf(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User  - With Data In Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"// No error given"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{name}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{test_url}}/api/users/2",
+					"host": [
+						"{{test_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
